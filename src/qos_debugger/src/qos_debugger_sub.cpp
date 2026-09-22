@@ -95,7 +95,7 @@ private:
     }
     else if (msg->seq > expected_seq_)
     {
-      const uint32_t lost = msg->seq - expected_seq_;
+      const uint32_t lost = msg->seq - expected_seq_; // 在做第三问打印帧率时嫌logger太多可以给RCLCPP_WARN注释掉
       RCLCPP_WARN(
           this->get_logger(),
           "检测到丢包: 期望 seq=%u, 实际 seq=%u, 丢失 %u 条",
@@ -103,6 +103,7 @@ private:
     }
     else if (msg->seq < expected_seq_)
     {
+      // 在做第三问打印帧率时嫌logger太多可以给RCLCPP_WARN注释掉
       RCLCPP_WARN(
           this->get_logger(),
           "seq 回退 (期望 %u, 实际 %u)，重置基准（回绕/多发布者/乱序）",
@@ -112,6 +113,7 @@ private:
     expected_seq_ = msg->seq + 1;
     received_count_++;
 
+    // 在做第三问打印帧率时嫌logger太多可以给RCLCPP_INFO_THROTTLE注释掉
     RCLCPP_INFO_THROTTLE(
         this->get_logger(), *this->get_clock(), 2000,
         "收到 seq=%u, stamp=%u.%09u, distance=%.3f",
@@ -126,6 +128,10 @@ private:
         this->get_logger(),
         "累计: 收到 %u 条, 丢失 %u 条, 丢包率 %.2f%%",
         received_count_, lost_count_, loss_rate);
+    /*
+    请在这里加入你的帧率计算公式并打印
+
+    */
   }
 
   rclcpp::Subscription<nav_hw_interfaces::msg::SensorData>::SharedPtr subscription_;
@@ -138,6 +144,10 @@ private:
   uint32_t expected_seq_{0};
   uint32_t received_count_{0};
   uint32_t lost_count_{0};
+
+  // 第三问要用到的两个变量
+  uint32_t last_received_count_{0};
+  std::chrono::steady_clock::time_point last_report_time_{std::chrono::steady_clock::now()};
 };
 
 int main(int argc, char *argv[])

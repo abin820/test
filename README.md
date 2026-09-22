@@ -56,3 +56,4 @@ ros2 run qos_debugger qos_debugger_sub
 有没有什么命令可以查看节点的配置
 可以通过修复qos_debugger_sub.cpp中的一处或几处代码解决该问题
 
+## 任务三：把收到的消息的帧率计算并打印出来（放在定时器回调函数中每秒打印一次即可）
